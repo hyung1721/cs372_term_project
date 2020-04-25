@@ -6,5 +6,5 @@ Extract memes from YouTube Comment
 
 # 수정 완료했을 때
 > git add .  
-> git commiit -m "exaplanation about modified code"  
+> git commit -m "exaplanation about modified code"  
 > git push origin master  
