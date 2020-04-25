@@ -2,7 +2,7 @@
 Extract memes from YouTube Comment
 
 # 수정 시작할 때
-\`git pull\`
+> git pull
 
 # 수정 완료했을 때
 git add .
