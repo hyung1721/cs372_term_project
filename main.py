@@ -5,6 +5,8 @@ Created on Sat Apr 25 13:30:05 2020
 @author: hyung
 """
 
+# git test 
+
 from crawl import crawl_comment
 import pandas as pd
 from nltk import word_tokenize
