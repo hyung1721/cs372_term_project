@@ -11,3 +11,7 @@ Extract memes from YouTube Comment
 > git add .  
 > git commit -m "exaplanation about modified code"  
 > git push origin master  
+
+## 코드 돌리기
+main.py 돌리기  
+crawl.py의 변수 n으로 댓글 개수 조정 가능  
