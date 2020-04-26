@@ -11,17 +11,6 @@ import time
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import NoSuchElementException
-
-def search_element(driver, path):
-    try:
-        elem = driver.find_element_by_xpath(path)
-        return elem
-    except NosSuchElementException:
-        driver.execute_script("window.scrollTo(0,Math.max(document.documentElement.scrollHeight,document.body.scrollHeight,document.documentElement.clientHeight));")
-        search_element()
-
-
 def crawl_comment(url):
     comment_data = pd.DataFrame({'content':[],
                                 'subcomment_num':[],
@@ -59,7 +48,7 @@ def crawl_comment(url):
     
     browser.find_element_by_xpath('//paper-listbox[@class="dropdown-content style-scope yt-dropdown-menu"]/a[1]').click()
     
-    # n번 스크롤하기 
+    # n번 스크롤하기 이거 늘리면 댓글 개수 늘어남!!!
     num_page_down = 10
     while num_page_down:
         body.send_keys(Keys.PAGE_DOWN)
