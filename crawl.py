@@ -11,6 +11,17 @@ import time
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import NoSuchElementException
+
+def search_element(driver, path):
+    try:
+        elem = driver.find_element_by_xpath(path)
+        return elem
+    except NosSuchElementException:
+        driver.execute_script("window.scrollTo(0,Math.max(document.documentElement.scrollHeight,document.body.scrollHeight,document.documentElement.clientHeight));")
+        search_element()
+
+
 def crawl_comment(url):
     comment_data = pd.DataFrame({'content':[],
                                 'subcomment_num':[],
@@ -30,15 +41,22 @@ def crawl_comment(url):
     
     # 댓글 창으로 이동
     num_page_down = 1
-    while num_page_down:
-        body.send_keys(Keys.PAGE_DOWN)
-        time.sleep(1.5)
-        num_page_down -= 1
+    while(True):
+        try:
+            sort_xpath = '//paper-button[@class="dropdown-trigger style-scope yt-dropdown-menu"]'
+            browser.find_element_by_xpath(sort_xpath).click()
+            time.sleep(1.5)
+            break
+        except:
+            body.send_keys(Keys.PAGE_DOWN)
+            time.sleep(1.5)
+            continue
+    
     
     # 인기많은 댓글로 정렬
-    sort_xpath = '//paper-button[@class="dropdown-trigger style-scope yt-dropdown-menu"]'
-    browser.find_element_by_xpath(sort_xpath).click()
-    time.sleep(1.5)
+    #sort_xpath = '//paper-button[@class="dropdown-trigger style-scope yt-dropdown-menu"]'
+    #browser.find_element_by_xpath(sort_xpath).click()
+    
     browser.find_element_by_xpath('//paper-listbox[@class="dropdown-content style-scope yt-dropdown-menu"]/a[1]').click()
     
     # n번 스크롤하기 
