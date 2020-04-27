@@ -1,4 +1,4 @@
-# cs372_term_project
+# CS372 Term Project
 Extract memes from YouTube Comment
 
 ## Clone
@@ -13,5 +13,8 @@ Extract memes from YouTube Comment
 > git push origin master  
 
 ## 코드 돌리기
+selenium package 설치 필수
+> pip install selenium  
+
 main.py 돌리기  
-crawl.py의 변수 n으로 댓글 개수 조정 가능  
+crawl.py의 변수 num으로 댓글 개수 조정 가능  
