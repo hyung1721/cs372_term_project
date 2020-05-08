@@ -11,6 +11,10 @@ import time
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
+
+from pickle import dump
+from pickle import load
+
 def crawl_comment(url):
     comment_data = pd.DataFrame({'content':[],
                                 'subcomment_num':[],
@@ -43,7 +47,7 @@ def crawl_comment(url):
             continue
     
     
-    # 인기많은 댓글로 정렬
+    # 인기많은 댓글로 정렬      ->>  인기많은 댓글로 정렬 - train할때만 필요 <- 인기~likes라는 assumption 필요
     #sort_xpath = '//paper-button[@class="dropdown-trigger style-scope yt-dropdown-menu"]'
     #browser.find_element_by_xpath(sort_xpath).click()
     
@@ -51,7 +55,7 @@ def crawl_comment(url):
     
     # n번 스크롤하기 이거 늘리면 댓글 개수 늘어남!!!
     # n = 원하는 댓글 개수 // 5
-    num_page_down = 200
+    num_page_down = 20
     while num_page_down:
         body.send_keys(Keys.PAGE_DOWN)
         time.sleep(1.5)
@@ -131,4 +135,17 @@ def crawl_comment(url):
     
     comment_data.index = range(len(comment_data))
     
+    return comment_data
+
+def save_comment_data():
+    url = 'https://www.youtube.com/watch?v=zP2ef8PTH6w'
+    comment_data = crawl_comment(url).copy()
+    output = open('comment_data.pkl', 'wb')
+    dump(comment_data, output, -1)
+    output.close()
+
+def load_comment_data():
+    input = open('comment_data.pkl', 'rb')
+    comment_data = load(input)
+    input.close()
     return comment_data
