@@ -162,6 +162,7 @@ def crawl_comment_list(urls, isTop):
         comment_data_list.append(crawl_comment(url, isTop).copy())
     
     return comment_data_list
+    
 
 def save_comment_data_train(): 
     # csv파일에서 링크들을 받아오도록 수정 
@@ -238,26 +239,41 @@ def save_comment_data_test():
     output.close()
     
 def load_comment_data_test():
-   
+    comment_data_list = []
     input = open('test_comment_data_list.pkl', 'rb')
     
-    
-    ##여기서 while문이 들어가야함
-    comment_data_list = load(input)
-    
-    
+    while True:
+        try:
+            load_data_list = load(input)
+        except:
+            break
+        
+        comment_data_list = comment_data_list + load_data_list
+        
     input.close()
     return comment_data_list
 
+
+def after_tokenize(words):
+    for index,word in enumerate(words):
+        if index==len(words)-1: break
+        if word=='gon' and words[index+1] =='na':
+            words[index] = 'gonna'
+            words.pop(index+1)
+        if word=='wan' and words[index+1] =='na':
+            words[index] = 'wanna'
+            words.pop(index+1)
+    return words
+
 def tokenize_comments (comment_data_list):
-    raw_comment_list = []
+    #raw_comment_list = []
     tokenized_comment_list = []
     
     for comment_data in comment_data_list:
         for i in range(len(comment_data)):
             temp = comment_data['content'].iloc[i]
-            raw_comment_list.append(temp)
-            tokenized_comment_list.append(word_tokenize(temp))
+       #     raw_comment_list.append(temp)
+            tokenized_comment_list.append(after_tokenize(word_tokenize(temp)))
 ############################################################################    
    # raw_text = ".".join(raw_comment_list)    
   #  retokenize = RegexpTokenizer("[\w]+")
@@ -268,4 +284,23 @@ def tokenize_comments (comment_data_list):
   #  freqdist_comment = FreqDist(tokenized_comment_list2)  
   #  freqdist_comment.plot(20)
 ############################################################################ 
-    return raw_comment_list, tokenized_comment_list
+    return tokenized_comment_list 
+    #return raw_comment_list, tokenized_comment_list
+
+def tokenize_liked_comments(comment_data_list):
+    tokenized_liked_comment_list = []
+    
+  
+    for index, comment_data in enumerate(comment_data_list):
+        like_content_list = []
+        num_comments = len(comment_data)
+        for i in range(num_comments):
+            likenum, content = comment_data['like_num'].iloc[i] , comment_data['content'].iloc[i]
+            like_content_list.append((likenum, content))
+        like_content_list.sort(key = lambda x:x[0] , reverse=True)
+        like_content_list = like_content_list[:max(int(num_comments*0.01),1)]
+        
+        for _, content in like_content_list:
+            tokenized_liked_comment_list.append( after_tokenize(word_tokenize(content)))      
+        
+    return tokenized_liked_comment_list

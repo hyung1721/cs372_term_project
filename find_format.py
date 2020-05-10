@@ -19,8 +19,8 @@ def high_freq(elems,percent):
 
 def save_other_grams ():
     HIGH_FREQ_UNI=0.01
-    HIGH_FREQ_BI = 0.01
-    HIGH_FREQ_TRI = 0.005
+    HIGH_FREQ_BI = 0.02
+    HIGH_FREQ_TRI = 0.02
     other_corpus_unigrams = [w.lower() for w in (gutenberg.words() + brown.words()+webtext.words())]
     other_corpus_freq_unigrams = high_freq(other_corpus_unigrams, HIGH_FREQ_UNI)
     output = open('unigrams_data.pkl', 'wb')
@@ -76,7 +76,7 @@ def remove_aph(elems):
     
 def get_format_criteria (comments,other_grams_triple):
     HIGH_FREQ_UNI=0.01
-    HIGH_FREQ_BI = 0.01
+    HIGH_FREQ_BI = 0.006
     HIGH_FREQ_TRI = 0.005
     unigrams, bigrams, trigrams = ([],[],[])
     
@@ -94,29 +94,28 @@ def get_format_criteria (comments,other_grams_triple):
     
     bigrams = high_freq( remove_aph(not_other_corpus (bigrams, other_corpus_freq_bigrams)), HIGH_FREQ_BI )
     bigrams = [bigram for bigram in bigrams if bigram not in[('?','!'),('...','...'),('--', '--'),('...','.'),('!','!'),('?','?'),('...', '..')]]
-    #이걸로 충분하지 않은듯..
+    
                                                                         
 
     trigrams = high_freq ( remove_aph(not_other_corpus(trigrams, other_corpus_freq_trigrams)) , HIGH_FREQ_TRI)
     trigrams=[trigram for trigram in trigrams if trigram not in [('!','!', '!'), ('?','?','?'), ('--', '--', '--'), ('...', '...', '...')]]
                                                        
 
+#############################################
+    
+    bigrams.remove(('this','video'))
+    bigrams.remove(('this','song'))   
+    bigrams.remove(('https', ':'))
+   # if('so','cute') in bigrams: bigrams.remove(('so','cute'))
+    
+    trigrams.remove(('this','song','is'))
+    
+
+##############################################
     return [], bigrams, trigrams
 
 
 def get_format_from_comments(train_comment_data_list):
     other_grams_triple = load_other_grams()
-    raw_comment_list, tokenized_comment_list = tokenize_comments(train_comment_data_list)  
+    tokenized_comment_list = tokenize_comments(train_comment_data_list)  
     return get_format_criteria(tokenized_comment_list, other_grams_triple )
-
-
-    
-
-
-
-
-
-
-    
-    
-    

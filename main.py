@@ -8,12 +8,12 @@ Created on Sat Apr 25 13:30:05 2020
 # git test 
 import nltk
 from find_format import save_other_grams,load_other_grams, get_format_from_comments
-from crawl import save_comment_data_train, load_comment_data_train, save_comment_data_test, load_comment_data_test, tokenize_comments
+from crawl import save_comment_data_train, load_comment_data_train, save_comment_data_test, load_comment_data_test, tokenize_comments, tokenize_liked_comments
 import pandas as pd
 
 
 #print ("first time: initialize_dataset()")
-#print ("other times: get_format_from_comments(load_comment_data_train(), load_other_grams()) ")
+#print ("other times: get_format_from_comments(load_comment_data_train()) ")
 print ("other times: probability_factor_format() ")
 
 
@@ -26,7 +26,10 @@ def initialize_dataset():
 
 def probability_factor_format (): 
     _, bigrams, trigrams = get_format_from_comments(load_comment_data_train())
-    _, tokenized_comment_list = tokenize_comments(load_comment_data_test())
+    tokenized_comment_list = tokenize_comments(load_comment_data_test())
+    
+    
+    liked_tokenized_comment_list = tokenize_liked_comments(load_comment_data_test())
     
     
     factor_comments =[]
@@ -38,21 +41,37 @@ def probability_factor_format ():
             if bigram in bigrams:
                 num_factor_comments += 1
                 is_bigram = True 
-                factor_comments.append(tokenized_comment)
+              #  factor_comments.append(tokenized_comment)]
+                factor_comments.append(bigram)
                 break
         if is_bigram: continue
         for trigram in nltk.trigrams(tokenized_comment):
             if trigram in trigrams:
                 num_factor_comments+=1
-                factor_comments.append(tokenized_comment)
+              #  factor_comments.append(tokenized_comment)
+                factor_comments.append(trigram)
                 break
     
-#    // crawl의 output으로 나온것에 적용
-#comments.sort(key = lambda x: (x.like_num), reverse=True )
-  #  num_liked_factor_comments = 
-            #아직 안한 부분!!
-    return factor_comments, num_factor_comments
-  #  return num_liked_comments_facotr / num_comments_factor
+    liked_factor_comments =[]
+    num_liked_factor_comments = 0
+    
+    for liked_tokenized_comment in liked_tokenized_comment_list:
+        is_bigram = False
+        for bigram in nltk.bigrams(liked_tokenized_comment):
+            if bigram in bigrams:
+                num_liked_factor_comments += 1
+                is_bigram = True 
+                liked_factor_comments.append(bigram)
+                break
+        if is_bigram: continue
+        for trigram in nltk.trigrams(liked_tokenized_comment):
+            if trigram in trigrams:
+                num_liked_factor_comments+=1
+                liked_factor_comments.append(trigram)
+                break
+       
+    return factor_comments, num_factor_comments, liked_factor_comments, num_liked_factor_comments, num_liked_factor_comments/num_factor_comments
+
 
 def probability_factor_timing ():
     
