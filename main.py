@@ -1,175 +1,63 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sat Apr 25 10:18:14 2020
+Created on Sat Apr 25 13:30:05 2020
 
 @author: hyung
 """
 
-from bs4 import BeautifulSoup 
-import pandas as pd 
-import time
-from selenium.webdriver import Chrome
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.keys import Keys
-
-from pickle import dump
-from pickle import load
+# git test 
+import nltk
+from find_format import save_other_grams,load_other_grams, get_format_from_comments
+from crawl import save_comment_data_train, load_comment_data_train, save_comment_data_test, load_comment_data_test, tokenize_comments
+import pandas as pd
 
 
-
-def crawl_comment(url):
-    comment_data = pd.DataFrame({'content':[],
-                                'subcomment_num':[],
-                                'like_num':[],
-                                'uploaded_time':[]})
-    options = Options()
-    options.add_argument('--start-maximized')
-    
-    delay=3
-    browser = Chrome()
-    browser.implicitly_wait(delay)
-    #browser.maximize_window()
-    
-    start_url = url
-    
-    browser.get(start_url) 
-    body = browser.find_element_by_tag_name('body')
-    
-    # 댓글 창으로 이동
-    num_page_down = 1
-    while(True):
-        try:
-            sort_xpath = '//paper-button[@class="dropdown-trigger style-scope yt-dropdown-menu"]'
-            browser.find_element_by_xpath(sort_xpath).click()
-            time.sleep(1.5)
-            break
-        except:
-            body.send_keys(Keys.PAGE_DOWN)
-            time.sleep(1.5)
-            continue
-    
-    
-    # 인기많은 댓글로 정렬      ->>  인기많은 댓글로 정렬 - train할때만 필요 <- 인기~likes라는 assumption 필요
-    #sort_xpath = '//paper-button[@class="dropdown-trigger style-scope yt-dropdown-menu"]'
-    #browser.find_element_by_xpath(sort_xpath).click()
-    
-    browser.find_element_by_xpath('//paper-listbox[@class="dropdown-content style-scope yt-dropdown-menu"]/a[1]').click()
-    
-    # n번 스크롤하기 이거 늘리면 댓글 개수 늘어남!!!
-    # n = 원하는 댓글 개수 // 5
-    num_page_down = 15
-    while num_page_down:
-        body.send_keys(Keys.PAGE_DOWN)
-        time.sleep(1.5)
-        num_page_down -= 1
-    
-    html_current = browser.page_source
-    html_parsed = BeautifulSoup(html_current, 'html.parser')
-    comment_block = html_parsed.find_all('ytd-comment-thread-renderer',{'class':'style-scope ytd-item-section-renderer'})
-    
-    for i in range(len(comment_block)):
-        # content of comment
-        comment = comment_block[i].find('yt-formatted-string',{'id':'content-text','class':'style-scope ytd-comment-renderer'}).text.lower()
-        
-        # number of subcomment of comment
-        try:
-            subcomment_button = comment_block[i].find('yt-formatted-string',{'id':'text','class':'style-scope ytd-button-renderer'}).text
-            if (subcomment_button.strip() == '답글 보기'):
-                subcomment_num = 1
-            else:
-                subcomment_num = subcomment_button.lstrip('답글').rstrip('개 보기').strip()
-                if('천' in subcomment_num):
-                    subcomment_num = subcomment_num.rstrip('천').strip()
-                    subcomment_num = int(float(subcomment_num) * 1000)
-                elif('만' in subcomment_num):
-                    subcomment_num = subcomment_num.rstrip('만').strip()
-                    subcomment_num = int(float(subcomment_num) * 10000)
-                else:
-                    subcomment_num = int(subcomment_num)
-        except:
-            subcomment_num = 0
-        
-        # number of like of comment
-        try:
-            like_button = comment_block[i].find('span',{'id':'vote-count-left'}).text
-            like_num = like_button.strip()
-            if('천' in like_num):
-                like_num = like_num.rstrip('천').strip()
-                #print(like_num)
-                like_num = int(float(like_num) * 1000)
-            elif('만' in like_num):
-                like_num = like_num.rstrip('만').strip()
-                #print(like_num)
-                like_num = int(float(like_num) * 10000)
-            else:
-                like_num = int(like_num)
-        except:
-            like_num = 0
-            
-        try:
-            uploaded_time = comment_block[i].find('yt-formatted-string', {'class':'published-time-text above-comment style-scope ytd-comment-renderer'}).find('a',{'class':'yt-simple-endpoint style-scope yt-formatted-string'}).text
-            print(uploaded_time)
-            uploaded_time = uploaded_time.split(' ')[0]
-            print(uploaded_time)
-            if('분' in uploaded_time or '초' in uploaded_time):
-                uploaded_time = 0
-            elif('시간' in uploaded_time):
-                uploaded_time = uploaded_time.rstrip('시간').strip()
-                uploaded_time = int(uploaded_time)
-            elif('일' in uploaded_time):
-                uploaded_time = uploaded_time.rstrip('일').strip()
-                uploaded_time = int(uploaded_time) * 24
-            elif('주' in uploaded_time):
-                uploaded_time = uploaded_time.rstrip('주').strip()
-                uploaded_time = int(uploaded_time) * 24 * 7
-            elif('개월' in uploaded_time):
-                uploaded_time = uploaded_time.rstrip('개월').strip()
-                print(uploaded_time)
-                uploaded_time = int(uploaded_time) * 24 * 30
-                print(uploaded_time)
-            elif('년' in uploaded_time):
-                uploaded_time = uploaded_time.rstrip('년').strip()
-                uploaded_time = int(uploaded_time) * 24 * 365
-        except:
-            print('error')
-        new_comment_data =  pd.DataFrame({'content':[comment], 'subcomment_num':[subcomment_num], 'like_num':[like_num], 'uploaded_time':[uploaded_time]})
-        comment_data = comment_data.append(new_comment_data)
-    
-    comment_data.index = range(len(comment_data))
-    
-    return comment_data
+#print ("first time: initialize_dataset()")
+#print ("other times: get_format_from_comments(load_comment_data_train(), load_other_grams()) ")
+print ("other times: probability_factor_format() ")
 
 
-def crawl_comment_list(urls):
-    comment_data_list = []
-    
-    for url in urls:
-        comment_data_list.append(crawl_comment(url).copy())
-    
-    return comment_data_list
 
-def save_comment_data():
-    # csv파일에서 링크들을 받아오도록 수정 
-    urls = ['https://www.youtube.com/watch?v=9bZkp7q19f0', 'https://www.youtube.com/watch?v=W85F-UmnbF4'
-,'https://www.youtube.com/watch?v=Yr14Io0wsiU', 'https://www.youtube.com/watch?v=0mJiPcKybzU', 'https://www.youtube.com/watch?v=szdbKz5CyhA'
-,'https://www.youtube.com/watch?v=Y_ZS_EfoYpA', 'https://www.youtube.com/watch?v=yPWAfjvVtEM', 'https://www.youtube.com/watch?v=2Qa9YDgtcaM',
-'https://www.youtube.com/watch?v=WN-IW6wOdnI', 'https://www.youtube.com/watch?v=vWgjqMyP5kk', 'https://www.youtube.com/watch?v=27Dx6ztJ8jw',
-'https://www.youtube.com/watch?v=PzVqQWxBXQE',  'https://www.youtube.com/watch?v=27Dx6ztJ8jw', 'https://www.youtube.com/watch?v=HFsKxbrZKNQ',
-'https://www.youtube.com/watch?v=cG_NB2cQnGU', 'https://www.youtube.com/watch?v=XDXrP9HET2A', 'https://www.youtube.com/watch?v=N-sLp2Ri76s']
-    
-    
-    #comment_data = crawl_comment(url).copy()
-    comment_data_list = crawl_comment_list(urls)
-    #output = open('comment_data.pkl', 'wb')
-    output = open('comment_data_list.pkl', 'wb')
-    #dump(comment_data, output, -1)
-    dump(comment_data_list, output, -1)
-    output.close()
+def initialize_dataset():
+    save_other_grams()
+    save_comment_data_train()
+    save_comment_data_test()
 
-def load_comment_data():
-    #input = open('comment_data.pkl', 'rb')
-    input = open('comment_data_list.pkl', 'rb')
-    #comment_data = load(input)
-    comment_data_list = load(input)
-    input.close()
-    return comment_data_list
+
+def probability_factor_format (): 
+    _, bigrams, trigrams = get_format_from_comments(load_comment_data_train())
+    _, tokenized_comment_list = tokenize_comments(load_comment_data_test())
+    
+    
+    factor_comments =[]
+    num_factor_comments = 0
+    
+    for tokenized_comment in tokenized_comment_list:
+        is_bigram = False
+        for bigram in nltk.bigrams(tokenized_comment):
+            if bigram in bigrams:
+                num_factor_comments += 1
+                is_bigram = True 
+                factor_comments.append(tokenized_comment)
+                break
+        if is_bigram: continue
+        for trigram in nltk.trigrams(tokenized_comment):
+            if trigram in trigrams:
+                num_factor_comments+=1
+                factor_comments.append(tokenized_comment)
+                break
+    
+#    // crawl의 output으로 나온것에 적용
+#comments.sort(key = lambda x: (x.like_num), reverse=True )
+  #  num_liked_factor_comments = 
+            #아직 안한 부분!!
+    return factor_comments, num_factor_comments
+  #  return num_liked_comments_facotr / num_comments_factor
+
+def probability_factor_timing ():
+    
+    return 1.0
+
+def probabilty_factor_subscribers ():
+    
+    return 1.0

@@ -6,10 +6,10 @@ Created on Fri May  8 19:43:17 2020
 """
 import nltk
 from nltk import FreqDist
-from nltk.corpus import gutenberg, brown
+from nltk.corpus import gutenberg, brown, webtext
 from pickle import dump
 from pickle import load
-
+from crawl import tokenize_comments
 
 
 def high_freq(elems,percent):
@@ -19,9 +19,9 @@ def high_freq(elems,percent):
 
 def save_other_grams ():
     HIGH_FREQ_UNI=0.01
-    HIGH_FREQ_BI = 0.003
-    HIGH_FREQ_TRI = 0.001
-    other_corpus_unigrams = [w.lower() for w in (gutenberg.words() + brown.words())]
+    HIGH_FREQ_BI = 0.01
+    HIGH_FREQ_TRI = 0.005
+    other_corpus_unigrams = [w.lower() for w in (gutenberg.words() + brown.words()+webtext.words())]
     other_corpus_freq_unigrams = high_freq(other_corpus_unigrams, HIGH_FREQ_UNI)
     output = open('unigrams_data.pkl', 'wb')
     dump(other_corpus_freq_unigrams, output, -1)
@@ -68,13 +68,16 @@ def add_tri(cmt, tri):
     cmt_tri=list(nltk.trigrams(cmt))
     return tri+cmt_tri
       
-def not_other_corpus(high_freq_elems, other_corpus_elems):
-    return [elem for elem in high_freq_elems if not elem in other_corpus_elems]
+def not_other_corpus(elems, other_corpus_elems):
+    return [elem for elem in elems if not elem in other_corpus_elems]
+
+def remove_aph(elems):
+    return [elem for elem in elems if not '’' in elem and all( ("'" not in word) for word in elem ) ] 
     
 def get_format_criteria (comments,other_grams_triple):
     HIGH_FREQ_UNI=0.01
-    HIGH_FREQ_BI = 0.003
-    HIGH_FREQ_TRI = 0.001
+    HIGH_FREQ_BI = 0.01
+    HIGH_FREQ_TRI = 0.005
     unigrams, bigrams, trigrams = ([],[],[])
     
     other_corpus_freq_unigrams = other_grams_triple[0]
@@ -87,15 +90,24 @@ def get_format_criteria (comments,other_grams_triple):
         bigrams = add_bi(comment, bigrams)
         trigrams = add_tri(comment, trigrams)
         
-    unigrams = not_other_corpus(high_freq(unigrams, HIGH_FREQ_UNI), other_corpus_freq_unigrams)
-########할거면 거른 후에 해야함!!  -> bigrams도 마찬가지~
+    #unigrams = high_freq( not_other_corpus (unigrams, other_corpus_freq_unigrams) , HIGH_FREQ_UNI)
     
-    
-    bigrams = not_other_corpus(high_freq(bigrams, HIGH_FREQ_BI), other_corpus_freq_bigrams)
-    trigrams = not_other_corpus(high_freq(trigrams, HIGH_FREQ_TRI), other_corpus_freq_trigrams)
-    return unigrams, bigrams, trigrams
+    bigrams = high_freq( remove_aph(not_other_corpus (bigrams, other_corpus_freq_bigrams)), HIGH_FREQ_BI )
+    bigrams = [bigram for bigram in bigrams if bigram not in[('?','!'),('...','...'),('--', '--'),('...','.'),('!','!'),('?','?'),('...', '..')]]
+    #이걸로 충분하지 않은듯..
+                                                                        
+
+    trigrams = high_freq ( remove_aph(not_other_corpus(trigrams, other_corpus_freq_trigrams)) , HIGH_FREQ_TRI)
+    trigrams=[trigram for trigram in trigrams if trigram not in [('!','!', '!'), ('?','?','?'), ('--', '--', '--'), ('...', '...', '...')]]
+                                                       
+
+    return [], bigrams, trigrams
 
 
+def get_format_from_comments(train_comment_data_list):
+    other_grams_triple = load_other_grams()
+    raw_comment_list, tokenized_comment_list = tokenize_comments(train_comment_data_list)  
+    return get_format_criteria(tokenized_comment_list, other_grams_triple )
 
 
     
