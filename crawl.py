@@ -242,6 +242,8 @@ def load_comment_data_test():
     comment_data_list = []
     input = open('test_comment_data_list.pkl', 'rb')
     
+    load(input)
+    
     while True:
         try:
             load_data_list = load(input)

@@ -104,7 +104,7 @@ def get_format_criteria (comments,other_grams_triple):
 #############################################
     
     bigrams.remove(('this','video'))
-    bigrams.remove(('this','song'))   
+    #bigrams.remove(('this','song'))   
     bigrams.remove(('https', ':'))
    # if('so','cute') in bigrams: bigrams.remove(('so','cute'))
     
@@ -119,3 +119,15 @@ def get_format_from_comments(train_comment_data_list):
     other_grams_triple = load_other_grams()
     tokenized_comment_list = tokenize_comments(train_comment_data_list)  
     return get_format_criteria(tokenized_comment_list, other_grams_triple )
+
+
+    
+
+
+
+
+
+
+    
+    
+    

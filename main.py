@@ -10,7 +10,7 @@ import nltk
 from find_format import save_other_grams,load_other_grams, get_format_from_comments
 from crawl import save_comment_data_train, load_comment_data_train, save_comment_data_test, load_comment_data_test, tokenize_comments, tokenize_liked_comments
 import pandas as pd
-
+from collections import defaultdict
 
 #print ("first time: initialize_dataset()")
 #print ("other times: get_format_from_comments(load_comment_data_train()) ")
@@ -32,7 +32,8 @@ def probability_factor_format ():
     liked_tokenized_comment_list = tokenize_liked_comments(load_comment_data_test())
     
     
-    factor_comments =[]
+    factor_comments = defaultdict(int)
+    
     num_factor_comments = 0
     
     for tokenized_comment in tokenized_comment_list:
@@ -42,17 +43,17 @@ def probability_factor_format ():
                 num_factor_comments += 1
                 is_bigram = True 
               #  factor_comments.append(tokenized_comment)]
-                factor_comments.append(bigram)
+                factor_comments[bigram] = factor_comments[bigram]+1
                 break
         if is_bigram: continue
         for trigram in nltk.trigrams(tokenized_comment):
             if trigram in trigrams:
                 num_factor_comments+=1
               #  factor_comments.append(tokenized_comment)
-                factor_comments.append(trigram)
+                factor_comments[trigram] = factor_comments[trigram]+1
                 break
     
-    liked_factor_comments =[]
+    liked_factor_comments = defaultdict(int)
     num_liked_factor_comments = 0
     
     for liked_tokenized_comment in liked_tokenized_comment_list:
@@ -61,16 +62,18 @@ def probability_factor_format ():
             if bigram in bigrams:
                 num_liked_factor_comments += 1
                 is_bigram = True 
-                liked_factor_comments.append(bigram)
+                liked_factor_comments[bigram] = liked_factor_comments[bigram]+1
                 break
         if is_bigram: continue
         for trigram in nltk.trigrams(liked_tokenized_comment):
             if trigram in trigrams:
                 num_liked_factor_comments+=1
-                liked_factor_comments.append(trigram)
+                liked_factor_comments[trigram] = liked_factor_comments[trigram]+1
                 break
        
-    return factor_comments, num_factor_comments, liked_factor_comments, num_liked_factor_comments, num_liked_factor_comments/num_factor_comments
+    r1=sorted(factor_comments.items(), key= lambda elem:elem[1], reverse=True)
+    r2=sorted(liked_factor_comments.items(), key= lambda elem:elem[1], reverse=True)
+    return r1, num_factor_comments, r2, num_liked_factor_comments, num_liked_factor_comments/num_factor_comments
 
 
 def probability_factor_timing ():
@@ -80,3 +83,4 @@ def probability_factor_timing ():
 def probabilty_factor_subscribers ():
     
     return 1.0
+
