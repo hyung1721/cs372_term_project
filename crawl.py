@@ -9,6 +9,10 @@ from bs4 import BeautifulSoup
 import pandas as pd 
 import time
 from selenium.webdriver import Chrome
+from selenium.webdriver.support import ui
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
 
@@ -306,3 +310,88 @@ def tokenize_liked_comments(comment_data_list):
             tokenized_liked_comment_list.append( after_tokenize(word_tokenize(content)))      
         
     return tokenized_liked_comment_list
+
+'''
+def crawl_script(url):
+    script_data = pd.DataFrame({'time': [], 'script': []})
+    
+    options = Options()
+    options.add_argument('--start-maximized')
+    
+    delay=3
+    browser = Chrome()
+    browser.implicitly_wait(delay)
+    #browser.maximize_window()
+    
+    start_url = url
+    
+    browser.get(start_url) 
+    body = browser.find_element_by_tag_name('body')
+    
+    # click menu button
+    
+    time.sleep(1.5)
+    
+
+    a = YouTubeTranscriptApi.get_transcript('yZP1RodDTWk')
+    print(a)
+    
+    menu_xpath = '//div[@id="menu-container"]'
+    element = browser.find_element_by_xpath(menu_xpath)
+    element.find_element_by_xpath('//button[@aria-label="추가 작업"]').click()
+    
+    script_xpath = '//paper-item[@class="style-scope ytd-menu-service-item-renderer"]'
+    time.sleep(1.5)
+    browser.find_element_by_xpath(script_xpath).click()
+    
+    
+    time.sleep(3)
+    
+    html_current = browser.page_source
+    html_parsed = BeautifulSoup(html_current, 'html.parser')
+    script_block = html_parsed.find_all('div', {'class':'cue-group style-scope ytd-transcript-body-renderer'})
+    
+    for i in range(len(script_block)):
+        script_time    = script_block[i].find('div', {'class': 'cue-group style-scope ytd-transcript-body-renderer'}).text
+        script_content = script_block[i].find('div', {'class': 'cue style-scope ytd-transcript-body-renderer'}).text.lower()
+        
+        splitted_time = script_time.split(':')
+        start_time = int(splitted_time[0]) * 60 + int(splitted_time[1])
+        
+        new_script_data = pd.DataFrame({'time':[start_time], 'content': [script_content]})
+        script_data = script_data.append(new_script_data)
+    
+    return script_data
+    
+'''    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
