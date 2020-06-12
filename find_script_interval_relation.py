@@ -14,10 +14,10 @@ import pandas as pd
 from nltk import FreqDist
 
 
-def probability_factor_script_interval_relation(url):
+def probability_factor_script_interval_relation(url, comment_list):
     video_id = url.split("=")[-1]
     script_data = YouTubeTranscriptApi.get_transcript(video_id)
-    comment_list = load_comment_data_test()[2]
+    
     
     full_time = script_data[-1]['start'] + script_data[-1]['duration']
     num_interval = 10
@@ -85,9 +85,9 @@ def probability_factor_script_interval_relation(url):
                 if target_word.lower() in new_keyword_list[j]:
                     portion = 1
                     if(comment_list['like_num'].iloc[index_comment] >= 100):
-                        sum_weight_list_with_liked_comment[j] += portion/len(tokenized_comment)
+                        sum_weight_list_with_liked_comment[j] += portion
                     else:
-                        sum_weight_list_with_non_liked_comment[j] += portion/len(tokenized_comment)
+                        sum_weight_list_with_non_liked_comment[j] += portion
     count_all_comment = count_liked_comment + count_non_liked_comment
     sum_weight_list_with_all_comment = []
     for i in range(num_interval):
@@ -104,3 +104,22 @@ def probability_factor_script_interval_relation(url):
     print(sum_weight_list_with_liked_comment)
     print(sum_weight_list_with_non_liked_comment)
     return sum_weight_list_with_all_comment, sum_weight_list_with_liked_comment, sum_weight_list_with_non_liked_comment
+
+
+def probability_factor_script_interval_relation_comment(new_keyword_list, comment): 
+    
+    num_interval = 10
+
+    tokenized_comment = word_tokenize(comment)
+    
+    weights_comment = []
+    for i in range(num_interval):
+        weights_comment.append(0.0)
+    for target_word in tokenized_comment:
+        for j in range(num_interval):
+            if target_word.lower() in new_keyword_list[j]:
+                portion = 1
+                weights_comment[j]+=portion
+    weights_comment = [round(x, 2) for x in weights_comment]
+    
+    return weights_comment
