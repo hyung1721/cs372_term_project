@@ -29,13 +29,32 @@ def initialize_dataset():
 def probability_factor_format (): 
     
     
-    _, bigrams, trigrams = get_format_from_comments(load_comment_data_train())
+  
    
     
+    ## previous crawl
+    #_, bigrams, trigrams = get_format_from_comments(load_comment_data_train())
+   # tokenized_comment_list = tokenize_comments(load_comment_data_test())
+   # liked_tokenized_comment_list = tokenize_liked_comments(load_comment_data_test())
+    
+    
+    ## using youtube api
+    #_, bigrams, trigrams = get_format_from_comments(youtubeapi.load_comments(isTrain=True))
+   # tokenized_comment_list, liked_tokenized_comment_list = youtubeapi.load_comments(isTrain=False)
+    
+    
+    ### new one
+    
+    ## load_comment_data_test() 만 계속 쓰면 됨!!
+    _, bigrams, trigrams = get_format_from_comments(load_comment_data_test())
     tokenized_comment_list = tokenize_comments(load_comment_data_test())
     liked_tokenized_comment_list = tokenize_liked_comments(load_comment_data_test())
     
-    #tokenized_comment_list, liked_tokenized_comment_list = youtubeapi.tokenize_comments_youtubeapi
+    
+    
+    
+    
+    
     
     
     factor_comments = defaultdict(int)

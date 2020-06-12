@@ -16,6 +16,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
 
+from webdriver_manager.chrome import ChromeDriverManager
+
+
 from pickle import dump
 from pickle import load
 from nltk import word_tokenize
@@ -30,7 +33,9 @@ def crawl_comment(url, onlyTop=True):
     options.add_argument('--start-maximized')
     
     delay=3
-    browser = Chrome()
+   # browser = Chrome()
+    browser=Chrome(ChromeDriverManager().install())
+    
     browser.implicitly_wait(delay)
     #browser.maximize_window()
     
@@ -178,9 +183,11 @@ def save_comment_data_train():
 'https://www.youtube.com/watch?v=cG_NB2cQnGU', 'https://www.youtube.com/watch?v=XDXrP9HET2A', 'https://www.youtube.com/watch?v=N-sLp2Ri76s']
     
 
-    comment_data_list = crawl_comment_list(urls, True)
-   
-    output = open('train_comment_data_list.pkl', 'ab')
+    #comment_data_list = crawl_comment_list(urls, True)
+   # output = open('train_comment_data_list.pkl', 'ab')
+
+    comment_data_list = crawl_comment_list(urls, False)
+    output = open('test_comment_data_list.pkl', 'ab')
 
     dump(comment_data_list, output, -1)
     output.close()

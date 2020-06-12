@@ -69,6 +69,7 @@ def add_tri(cmt, tri):
     return tri+cmt_tri
       
 def not_other_corpus(elems, other_corpus_elems):
+    #return elems
     return [elem for elem in elems if not elem in other_corpus_elems]
 
 def remove_aph(elems):
@@ -76,40 +77,59 @@ def remove_aph(elems):
     
 def get_format_criteria (comments,other_grams_triple):
     HIGH_FREQ_UNI=0.01
-    HIGH_FREQ_BI = 0.006
-    HIGH_FREQ_TRI = 0.005
+    HIGH_FREQ_BI = 0.0005
+    HIGH_FREQ_TRI = 0.0005
     unigrams, bigrams, trigrams = ([],[],[])
     
     other_corpus_freq_unigrams = other_grams_triple[0]
     other_corpus_freq_bigrams = other_grams_triple[1]
     other_corpus_freq_trigrams = other_grams_triple[2]
     
-    for cmt in comments:
-        comment = [w.lower() for w in cmt]
-        unigrams = add_uni(comment,unigrams)
-        bigrams = add_bi(comment, bigrams)
-        trigrams = add_tri(comment, trigrams)
-        
-    #unigrams = high_freq( not_other_corpus (unigrams, other_corpus_freq_unigrams) , HIGH_FREQ_UNI)
     
+    print(len(comments))
+    for idx,cmt in enumerate(comments):
+        if idx%1000==0: 
+            print(idx)
+
+        comment = [w.lower() for w in cmt]
+
+        unigrams = add_uni(comment,unigrams)
+
+        bigrams = add_bi(comment, bigrams)
+
+        trigrams = add_tri(comment, trigrams)
+
+        
+    print("here1")
+
+    #unigrams = high_freq( not_other_corpus (unigrams, other_corpus_freq_unigrams) , HIGH_FREQ_UNI)
+
     bigrams = high_freq( remove_aph(not_other_corpus (bigrams, other_corpus_freq_bigrams)), HIGH_FREQ_BI )
+    print("here2")
+
     bigrams = [bigram for bigram in bigrams if bigram not in[('?','!'),('...','...'),('--', '--'),('...','.'),('!','!'),('?','?'),('...', '..')]]
     
                                                                         
 
+    
     trigrams = high_freq ( remove_aph(not_other_corpus(trigrams, other_corpus_freq_trigrams)) , HIGH_FREQ_TRI)
+    print("here3")
+
     trigrams=[trigram for trigram in trigrams if trigram not in [('!','!', '!'), ('?','?','?'), ('--', '--', '--'), ('...', '...', '...')]]
                                                        
-
+    print("here4")
 #############################################
-    
-    bigrams.remove(('this','video'))
-    #bigrams.remove(('this','song'))   
-    bigrams.remove(('https', ':'))
+  #  try:
+   #     bigrams.remove(('this','video'))
+   # except:None
+    #bigrams.remove(('this','song')) 
+   # try:
+   #     bigrams.remove(('https', ':'))
+  #  except: None
    # if('so','cute') in bigrams: bigrams.remove(('so','cute'))
-    
-    trigrams.remove(('this','song','is'))
-    
+ #   try:
+       # trigrams.remove(('this','song','is'))
+    #except:None
 
 ##############################################
     return [], bigrams, trigrams
@@ -118,6 +138,12 @@ def get_format_criteria (comments,other_grams_triple):
 def get_format_from_comments(train_comment_data_list):
     other_grams_triple = load_other_grams()
     tokenized_comment_list = tokenize_comments(train_comment_data_list)  
+    
+    ##
+    tokenized_comment_list = tokenized_comment_list[:5000]
+    
+    print(len(tokenized_comment_list))
+    
     return get_format_criteria(tokenized_comment_list, other_grams_triple )
 
 

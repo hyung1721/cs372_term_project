@@ -16,7 +16,8 @@ from pickle import dump
 from pickle import load
 
 
-api_key = "AIzaSyDnxAFkwrfghu1m9hWnV_mHVbuZRYldMZQ"
+#api_key = "AIzaSyDnxAFkwrfghu1m9hWnV_mHVbuZRYldMZQ"
+api_key = "AIzaSyAXLT6fsv4wT7yYw96oWn90k_wnMkdtHgg"
 
 youtube = build('youtube','v3',developerKey=api_key)
 
@@ -44,7 +45,7 @@ def get_all_comments(vid):
     nextPageToken = ''
     cnt = 0;
     
-    while(cnt<50): # 1000 comments per video
+    while(cnt<75): # 1500 comments per video
         response = get_response(vid, nextPageToken)
         for item in response['items']:
             snippet = item['snippet']['topLevelComment']['snippet']
@@ -97,6 +98,7 @@ def get_and_tokenize_multiplevids (urls):
     liked_comments_multiplevids = []
 
     for url in urls:
+        print(url)
         comments_singlevid, liked_comments_singlevid = get_and_tokenize_singlevid(url)
         comments_multiplevids += comments_singlevid
         liked_comments_multiplevids += liked_comments_singlevid
@@ -148,18 +150,22 @@ def save_comments(isTrain=True):
         "https://www.youtube.com/watch?v=nr56NIvkNZk", "https://www.youtube.com/watch?v=jtVKXoNA-K0"]
     
    
-    urls=urls
+    urls=urls[:1]
     comments , liked_comments = get_and_tokenize_multiplevids(urls)
     save_tup = (comments, liked_comments)
     
+    
+   # output=open('test_comment_data_list.pkl', 'ab')
     if isTrain:
-        output = open('youtubeapi_train_data.pkl', 'wb')
+        output = open('youtubeapi_train_data.pkl', 'ab')
     else:
-        output = open('youtubeapi_test_data.pkl', 'wb')
+        output = open('youtubeapi_test_data.pkl', 'ab')
     dump(save_tup, output, -1)
     output.close()
     
     
+    
+    ## NOT USED
 def load_comments(isTrain):
     comments= []
     liked_comments = []
