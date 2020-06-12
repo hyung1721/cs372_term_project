@@ -12,6 +12,8 @@ from crawl import save_comment_data_train, load_comment_data_train, save_comment
 import pandas as pd
 from collections import defaultdict
 
+import youtubeapi
+
 #print ("first time: initialize_dataset()")
 #print ("other times: get_format_from_comments(load_comment_data_train()) ")
 print ("other times: probability_factor_format() ")
@@ -25,11 +27,15 @@ def initialize_dataset():
 
 
 def probability_factor_format (): 
+    
+    
     _, bigrams, trigrams = get_format_from_comments(load_comment_data_train())
+   
+    
     tokenized_comment_list = tokenize_comments(load_comment_data_test())
-    
-    
     liked_tokenized_comment_list = tokenize_liked_comments(load_comment_data_test())
+    
+    #tokenized_comment_list, liked_tokenized_comment_list = youtubeapi.tokenize_comments_youtubeapi
     
     
     factor_comments = defaultdict(int)
