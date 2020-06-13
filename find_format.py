@@ -77,8 +77,8 @@ def remove_aph(elems):
     
 def get_format_criteria (comments,other_grams_triple):
     HIGH_FREQ_UNI=0.01
-    HIGH_FREQ_BI = 0.0005
-    HIGH_FREQ_TRI = 0.0005
+    HIGH_FREQ_BI = 0.005
+    HIGH_FREQ_TRI = 0.01
     unigrams, bigrams, trigrams = ([],[],[])
     
     other_corpus_freq_unigrams = other_grams_triple[0]
