@@ -51,25 +51,25 @@ def probability_factor_format ():
     
     ## load_comment_data_test() 만 계속 쓰면 됨!!
     try:
-        f = open("high_freq_bigrams.pkl", "rb")
+        f = open("high_freq_bigrams_1%.pkl", "rb")
         bigrams = load(f)
         f.close()
         
-        f = open("high_freq_trigrams.pkl", "rb")
+        f = open("high_freq_trigrams_1%.pkl", "rb")
         trigrams = load(f)
         f.close()
     except:
         _, bigrams, trigrams = get_format_from_comments(load_comment_data_test())
         
         
-        f = open("high_freq_bigrams.pkl", "wb")
+        f = open("high_freq_bigrams_1%.pkl", "wb")
         dump(bigrams, f)
         f.close()
         
-        f = open("high_freq_trigrams.pkl", "wb")
+        f = open("high_freq_trigrams_1%.pkl", "wb")
         dump(trigrams, f)
         f.close()
-    
+        
 #    _, bigrams, trigrams = get_format_from_comments(load_comment_data_test())
         
         
@@ -89,6 +89,7 @@ def probability_factor_format ():
     bigram_common_freq = []
     bigram_liked_freq = []
     for bigram in bigrams:
+        if bigrams.index(bigram)%1000 == 0: print(bigrams.index(bigram))
         cnt_common = 0
         cnt_liked = 0
         for comment in tokenized_comment_list:
@@ -103,6 +104,7 @@ def probability_factor_format ():
     trigram_common_freq = []
     trigram_liked_freq = []
     for trigram in trigrams:
+        if trigrams.index(trigram)%1000 == 0: print(trigrams.index(trigram))
         cnt_common = 0
         cnt_liked = 0
         for comment in tokenized_comment_list:
@@ -149,10 +151,10 @@ def produce_result_from_file():
     tri_with_like = list(zip(trigrams, tri_like_freq))
     
     bi_with_ratio = sorted(list(zip(bigrams, bi_ratio)), key = itemgetter(1), reverse = True)
-    tri_with_ratio = sorted(list(zip(trigrams, bi_ratio)), key = itemgetter(1), reverse = True)
+    tri_with_ratio = sorted(list(zip(trigrams, tri_ratio)), key = itemgetter(1), reverse = True)
     
     
-"""
+#    """
     f = open("bi_common_freq.csv", 'w', encoding = 'UTF-8')
     wr = csv.writer(f)
     for r in bi_with_common: wr.writerow(r)
@@ -182,7 +184,7 @@ def produce_result_from_file():
     wr = csv.writer(f)
     for r in tri_with_ratio: wr.writerow(r)
     f.close()
-"""
+#    """
     
     
     print("""

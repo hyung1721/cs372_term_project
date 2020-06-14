@@ -260,7 +260,7 @@ def load_comment_data_test():
             load_data_list = load(input)
         except:
             break
-        
+    
         comment_data_list = comment_data_list + load_data_list
         
     input.close()

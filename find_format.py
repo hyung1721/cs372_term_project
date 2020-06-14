@@ -77,7 +77,7 @@ def remove_aph(elems):
     
 def get_format_criteria (comments,other_grams_triple):
     HIGH_FREQ_UNI=0.01
-    HIGH_FREQ_BI = 0.005
+    HIGH_FREQ_BI = 0.01
     HIGH_FREQ_TRI = 0.01
     unigrams, bigrams, trigrams = ([],[],[])
     
@@ -86,18 +86,44 @@ def get_format_criteria (comments,other_grams_triple):
     other_corpus_freq_trigrams = other_grams_triple[2]
     
     
-    print(len(comments))
-    for idx,cmt in enumerate(comments):
-        if idx%1000==0: 
-            print(idx)
-
-        comment = [w.lower() for w in cmt]
-
-        unigrams = add_uni(comment,unigrams)
-
-        bigrams = add_bi(comment, bigrams)
-
-        trigrams = add_tri(comment, trigrams)
+    try:
+        f = open("unigrams_from_all_comments.pkl", "rb")
+        unigrams=load(f)
+        f.close()
+        
+        f = open("bigrams_from_all_comments.pkl", "rb")
+        bigrams=load(f)
+        f.close()
+        
+        f = open("trigrams_from_all_comments.pkl", "rb")
+        trigrams=load(f)
+        f.close()
+    
+    except:
+        print(len(comments))
+        for idx,cmt in enumerate(comments):
+            if idx%1000==0: 
+                print(idx)
+    
+            comment = [w.lower() for w in cmt]
+    
+            unigrams = add_uni(comment,unigrams)
+    
+            bigrams = add_bi(comment, bigrams)
+    
+            trigrams = add_tri(comment, trigrams)
+        
+        f = open("unigrams_from_all_comments.pkl", "wb")
+        dump(unigrams, f)
+        f.close()
+        
+        f = open("biigrams_from_all_comments.pkl", "wb")
+        dump(bigrams, f)
+        f.close()
+        
+        f = open("trigrams_from_all_comments.pkl", "wb")
+        dump(trigrams, f)
+        f.close()
 
         
     print("here1")
@@ -140,7 +166,7 @@ def get_format_from_comments(train_comment_data_list):
     tokenized_comment_list = tokenize_comments(train_comment_data_list)  
     
     ##
-    tokenized_comment_list = tokenized_comment_list[:5000]
+#    tokenized_comment_list = tokenized_comment_list[:5000]
     
     print(len(tokenized_comment_list))
     
