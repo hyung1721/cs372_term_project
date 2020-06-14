@@ -48,9 +48,7 @@ def factor_features(script_data, comment):
     featureset = {}
     script_relation = probability_factor_script_interval_relation_comment(script_data, comment)
     global a
-    featureset['related']=sum(script_relation)>sum(a)
-    for i in range(len(script_relation)):
-        featureset[str(i)] = script_relation[i]>a[i]
+    featureset[2] = script_relation[2]
     return featureset
 
 class EvaluateFactorClass():

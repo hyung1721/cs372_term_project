@@ -154,7 +154,9 @@ def produce_result_from_file():
     tri_with_ratio = sorted(list(zip(trigrams, tri_ratio)), key = itemgetter(1), reverse = True)
     
     
+
 #    """
+
     f = open("bi_common_freq.csv", 'w', encoding = 'UTF-8')
     wr = csv.writer(f)
     for r in bi_with_common: wr.writerow(r)
@@ -184,6 +186,7 @@ def produce_result_from_file():
     wr = csv.writer(f)
     for r in tri_with_ratio: wr.writerow(r)
     f.close()
+
 #    """
     
     
