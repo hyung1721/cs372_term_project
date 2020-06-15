@@ -51,22 +51,22 @@ def probability_factor_format ():
     
     ## load_comment_data_test() 만 계속 쓰면 됨!!
     try:
-        f = open("high_freq_bigrams_1%.pkl", "rb")
+        f = open("high_freq_bigrams_0.1%.pkl", "rb")
         bigrams = load(f)
         f.close()
         
-        f = open("high_freq_trigrams_1%.pkl", "rb")
+        f = open("high_freq_trigrams_0.1%.pkl", "rb")
         trigrams = load(f)
         f.close()
     except:
         _, bigrams, trigrams = get_format_from_comments(load_comment_data_test())
         
         
-        f = open("high_freq_bigrams_1%.pkl", "wb")
+        f = open("high_freq_bigrams_0.1%.pkl", "wb")
         dump(bigrams, f)
         f.close()
         
-        f = open("high_freq_trigrams_1%.pkl", "wb")
+        f = open("high_freq_trigrams_0.1%.pkl", "wb")
         dump(trigrams, f)
         f.close()
         

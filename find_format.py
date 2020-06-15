@@ -76,9 +76,9 @@ def remove_aph(elems):
     return [elem for elem in elems if not '’' in elem and all( ("'" not in word) for word in elem ) ] 
     
 def get_format_criteria (comments,other_grams_triple):
-    HIGH_FREQ_UNI=0.01
-    HIGH_FREQ_BI = 0.01
-    HIGH_FREQ_TRI = 0.01
+    HIGH_FREQ_UNI=0.001
+    HIGH_FREQ_BI = 0.001
+    HIGH_FREQ_TRI = 0.001
     unigrams, bigrams, trigrams = ([],[],[])
     
     other_corpus_freq_unigrams = other_grams_triple[0]
@@ -91,7 +91,7 @@ def get_format_criteria (comments,other_grams_triple):
         unigrams=load(f)
         f.close()
         
-        f = open("bigrams_from_all_comments.pkl", "rb")
+        f = open("biigrams_from_all_comments.pkl", "rb")
         bigrams=load(f)
         f.close()
         
