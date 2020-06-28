@@ -1,5 +1,5 @@
 # CS372 Term Project
-Extract memes from YouTube Comment
+How to Get Likes in YouTube Comments
 
 ## Clone
     git clone https://github.com/hyung1721/cs372_term_project.git  
